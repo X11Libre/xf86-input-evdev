@@ -50,7 +50,7 @@ static Atom prop_wheel_inertia  = 0;
 static Atom prop_wheel_timeout  = 0;
 static Atom prop_wheel_button   = 0;
 
-/* Local Funciton Prototypes */
+/* Local Function Prototypes */
 static int EvdevWheelEmuInertia(InputInfoPtr pInfo, WheelAxisPtr axis, int value);
 
 /* Filter mouse button events */

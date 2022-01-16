@@ -1933,7 +1933,7 @@ EvdevInit(DeviceIntPtr device)
      * So, unless you have a small screen, you won't be enjoying it much;
      * consequently, absolute axes are generally ignored.
      *
-     * However, currenly only a device with absolute axes can be registered
+     * However, currently only a device with absolute axes can be registered
      * as a touch{pad,screen}. Thus, given such a device, absolute axes are
      * used and relative axes are ignored.
      */
