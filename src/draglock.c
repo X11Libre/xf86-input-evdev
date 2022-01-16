@@ -5,7 +5,7 @@
  * Copyright 1994-2002 by The XFree86 Project, Inc.
  * Copyright 2002 by Paul Elliott
  * (Ported from xf86-input-mouse, above copyrights taken from there)
- * Copyright © 2008 University of South Australia
+ * Copyright Â© 2008 University of South Australia
  * Copyright 2008 by Chris Salch
  * Copyright 2008 Red Hat, Inc.
  *
