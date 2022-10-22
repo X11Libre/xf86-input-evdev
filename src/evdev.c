@@ -2015,6 +2015,7 @@ EvdevProc(DeviceIntPtr device, int what)
         {
             EvdevMBEmuFinalize(pInfo);
             Evdev3BEmuFinalize(pInfo);
+            EvdevWheelEmuFinalize(pInfo);
         }
         if (pInfo->fd != -1)
         {
