@@ -420,7 +420,8 @@ EvdevWheelEmuPreInit(InputInfoPtr pInfo)
                                                wheelButton);
                 buttons_ok = FALSE;
             }
-            if (wheelButton2 <= 0 || wheelButton2 > EVDEV_MAXBUTTONS || wheelButton2 == wheelButton) {
+            if ((buttons == 2) &&
+                (wheelButton2 <= 0 || wheelButton2 > EVDEV_MAXBUTTONS || wheelButton2 == wheelButton)) {
                 xf86IDrvMsg(pInfo, X_WARNING, "Invalid EmulateWheelButton 2nd value: %d\n",
                                                wheelButton2);
                 buttons_ok = FALSE;
