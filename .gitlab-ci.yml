@@ -4,7 +4,7 @@
 # Please see the ci-templates documentation for details:
 # https://freedesktop.pages.freedesktop.org/ci-templates/
 
-.templates_sha: &template_sha 34f4ade99434043f88e164933f570301fd18b125 # see https://docs.gitlab.com/ee/ci/yaml/#includefile
+.templates_sha: &template_sha 25e8e9f020880aa35fffe3d6b259b933f0f9449f # see https://docs.gitlab.com/ee/ci/yaml/#includefile
 
 
 include:
@@ -30,8 +30,8 @@ variables:
   # The tag should be updated each time the list of packages is updated.
   # Changing a tag forces the associated image to be rebuilt.
   # Note: the tag has no meaning, we use a date format purely for readability
-  FDO_DISTRIBUTION_TAG:  '2022-01-16.0'
-  FDO_DISTRIBUTION_PACKAGES:  'git gcc pkgconf autoconf automake make xorg-util-macros xorgproto xorg-server-devel pixman systemd-libs libevdev mtdev'
+  FDO_DISTRIBUTION_TAG:  '2023-10-01.0'
+  FDO_DISTRIBUTION_PACKAGES:  'git gcc pkgconf autoconf automake libtool make xorg-util-macros xorgproto xorg-server-devel pixman systemd-libs libevdev mtdev'
 
 
 #
