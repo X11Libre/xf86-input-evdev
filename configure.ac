@@ -44,7 +44,7 @@ XORG_MACROS_VERSION(1.8)
 XORG_DEFAULT_OPTIONS
 
 # Obtain compiler/linker options from server and required extensions
-PKG_CHECK_MODULES(XORG, [xorg-server >= 1.12] xproto [inputproto >= 2.1.99.3])
+PKG_CHECK_MODULES(XORG, [xorg-server >= 1.18] xproto [inputproto >= 2.1.99.3])
 PKG_CHECK_MODULES(UDEV, libudev)
 
 PKG_CHECK_MODULES(LIBEVDEV, [libevdev >= 0.4])
