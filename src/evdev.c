@@ -1077,11 +1077,13 @@ EvdevReadInput(InputInfoPtr pInfo)
     do {
         rc = libevdev_next_event(pEvdev->dev, LIBEVDEV_READ_FLAG_NORMAL, &ev);
         if (rc < 0) {
-            if (rc == -ENODEV) /* May happen after resume */
+            if (rc != -EAGAIN && rc != -EINTR && rc != -EWOULDBLOCK) {
+                /* May happen after resume or at device detach */
                 xf86RemoveEnabledDevice(pInfo);
-            else if (rc != -EAGAIN)
+                EvdevCloseDevice(pInfo);
                 LogMessageVerbSigSafe(X_ERROR, 0, "%s: Read error: %s\n", pInfo->name,
                                        strerror(-rc));
+            }
             break;
         } else if (rc == LIBEVDEV_READ_STATUS_SUCCESS) {
             if (pEvdev->mtdev)
