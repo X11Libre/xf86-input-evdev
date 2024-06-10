@@ -39,7 +39,9 @@
 #include <X11/extensions/XI.h>
 
 #include <sys/stat.h>
+#ifdef HAVE_LIBUDEV
 #include <libudev.h>
+#endif
 #include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -225,6 +227,7 @@ EvdevIsDuplicate(InputInfoPtr pInfo)
 static BOOL
 EvdevDeviceIsVirtual(const char* devicenode)
 {
+#ifdef HAVE_LIBUDEV
     struct udev *udev = NULL;
     struct udev_device *device = NULL;
     struct stat st;
@@ -255,6 +258,9 @@ out:
     udev_device_unref(device);
     udev_unref(udev);
     return rc;
+#else
+    return FALSE;
+#endif
 }
 
 
