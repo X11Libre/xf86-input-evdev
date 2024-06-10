@@ -36,7 +36,7 @@
 #define EVDEV_H
 
 #include <linux/input.h>
-#include <linux/types.h>
+#include <sys/types.h>
 
 #include <xorg-server.h>
 #include <xf86Xinput.h>
