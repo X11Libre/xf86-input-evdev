@@ -38,6 +38,13 @@
 #include <linux/input.h>
 #include <sys/types.h>
 
+/* Tolerate prior #include <linux/input.h> */
+#undef BUS_NONE
+#undef BUS_PCI
+#undef BUS_SBUS
+#undef BUS_PLATFORM
+#undef BUS_USB
+
 #include <xorg-server.h>
 #include <xf86Xinput.h>
 #include <xf86_OSproc.h>
