@@ -38,7 +38,6 @@
 #include <X11/keysym.h>
 #include <X11/extensions/XI.h>
 
-#include <linux/version.h>
 #include <sys/stat.h>
 #include <libudev.h>
 #include <unistd.h>
@@ -1486,10 +1485,8 @@ EvdevAddAbsValuatorClass(DeviceIntPtr device, int num_scroll_axes)
             continue;
 
         abs = libevdev_get_abs_info(pEvdev->dev, axis);
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 30)
         /* Kernel provides units/mm, X wants units/m */
         resolution = abs->resolution * 1000;
-#endif
 
         xf86InitValuatorAxisStruct(device, axnum,
                                    atoms[axnum],
