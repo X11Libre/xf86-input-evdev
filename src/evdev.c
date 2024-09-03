@@ -75,8 +75,8 @@
 #define CAPSFLAG	1
 #define NUMFLAG		2
 #define SCROLLFLAG	4
-#define MODEFLAG	8
-#define COMPOSEFLAG	16
+#define COMPOSEFLAG	8
+#define MODEFLAG	16
 
 #ifndef ABS_MT_SLOT
 #define ABS_MT_SLOT 0x2f
@@ -1117,8 +1117,8 @@ EvdevKbdCtrl(DeviceIntPtr device, KeybdCtrl *ctrl)
         { CAPSFLAG,	LED_CAPSL },
         { NUMFLAG,	LED_NUML },
         { SCROLLFLAG,	LED_SCROLLL },
-        { MODEFLAG,	LED_KANA },
-        { COMPOSEFLAG,	LED_COMPOSE }
+        { COMPOSEFLAG,	LED_COMPOSE },
+        { MODEFLAG,	LED_KANA }
     };
 
     InputInfoPtr pInfo;
