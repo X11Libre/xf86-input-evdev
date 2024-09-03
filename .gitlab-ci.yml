@@ -18,6 +18,14 @@ include:
   - template: Security/SAST.gitlab-ci.yml
 
 
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+
 stages:
   - prep             # prep work like rebuilding the container images if there is a change
   - build            # for actually building and testing things in a container
