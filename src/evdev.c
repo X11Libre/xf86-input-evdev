@@ -282,7 +282,7 @@ EvdevNextInQueue(InputInfoPtr pInfo)
 void
 EvdevQueueKbdEvent(InputInfoPtr pInfo, struct input_event *ev, int value)
 {
-    int code = ev->code + MIN_KEYCODE;
+    int code = ev->code;
     EventQueuePtr pQueue;
 
     /* Filter all repeated events from device.
@@ -290,10 +290,18 @@ EvdevQueueKbdEvent(InputInfoPtr pInfo, struct input_event *ev, int value)
     if (value == 2)
         return;
 
+    /* keycodes > 256 that have a historical mapping in xkeyboard-config */
+    switch (code) {
+        case KEY_TOUCHPAD_TOGGLE: code = KEY_F21; break;
+        case KEY_TOUCHPAD_ON:     code = KEY_F22; break;
+        case KEY_TOUCHPAD_OFF:    code = KEY_F23; break;
+        case KEY_MICMUTE:         code = KEY_F20; break;
+    }
+
     if ((pQueue = EvdevNextInQueue(pInfo)))
     {
         pQueue->type = EV_QUEUE_KEY;
-        pQueue->detail.key = code;
+        pQueue->detail.key = code + MIN_KEYCODE;
         pQueue->val = value;
     }
 }
