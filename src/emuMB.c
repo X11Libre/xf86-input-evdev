@@ -365,8 +365,11 @@ EvdevMBEmuSetProperty(DeviceIntPtr dev, Atom atom, XIPropertyValuePtr val,
         if (val->format != 8 || val->size != 1 || val->type != XA_INTEGER)
             return BadMatch;
 
-        if (!checkonly)
+        if (!checkonly) {
             pEvdev->emulateMB.enabled = *((BOOL*)val->data);
+            xf86IDrvMsg(pInfo, X_INFO, "Middle button emulation %s.\n",
+                        (pEvdev->emulateMB.enabled) ? "enabled" : "disabled");
+        }
     } else if (atom == prop_mbtimeout)
     {
         if (val->format != 32 || val->size != 1 || val->type != XA_INTEGER)

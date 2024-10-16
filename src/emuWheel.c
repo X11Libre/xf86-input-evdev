@@ -50,8 +50,65 @@ static Atom prop_wheel_inertia  = 0;
 static Atom prop_wheel_timeout  = 0;
 static Atom prop_wheel_button   = 0;
 
+/* States for wheel emulation in 2 button mode */
+enum EmuWheelState {
+    EMWHEEL_OFF,             /* default state */
+    EMWHEEL_TIMER,           /* timer pending - 1st button click was filtered, wait for other button */
+    EMWHEEL_EMULATING,       /* emulation active  */
+    EMWHEEL_LEAVING          /* leaving emulation - need to filter other button release */
+};
+
 /* Local Function Prototypes */
 static int EvdevWheelEmuInertia(InputInfoPtr pInfo, WheelAxisPtr axis, int value);
+
+/**
+ * Timer function 2 button mode.
+ * in EMWHEEL_TIMER state post a delayed button press event to the server.
+ *
+ * @param arg The InputInfoPtr for this device.
+ */
+
+CARD32
+EvdevWheelEmuTimer(OsTimerPtr timer, CARD32 time, pointer arg)
+{
+    InputInfoPtr      pInfo    = (InputInfoPtr)arg;
+    EvdevPtr          pEvdev   = pInfo->private;
+    struct emulateWheel *emuWheel    = &pEvdev->emulateWheel;
+
+#if HAVE_THREADED_INPUT
+    input_lock();
+#else
+    int sigstate = xf86BlockSIGIO();
+#endif
+
+    if (emuWheel->state_2B != EMWHEEL_TIMER || !emuWheel->delayed_button) {
+        xf86IDrvMsg(pInfo, X_WARNING, "EmuWheel2B timeout - unexpected state %d or no delayed button\n",
+                    emuWheel->state_2B);
+    }
+    if (emuWheel->state_2B == EMWHEEL_TIMER) {
+        EvdevPostButtonEvent(pInfo, emuWheel->delayed_button, BUTTON_PRESS);
+        emuWheel->delayed_button = 0;
+        emuWheel->state_2B = EMWHEEL_OFF;
+    }
+#if HAVE_THREADED_INPUT
+    input_unlock();
+#else
+    xf86UnblockSIGIO(sigstate);
+#endif
+    return 0;
+}
+
+
+void
+EvdevWheelEmuFinalize(InputInfoPtr pInfo)
+{
+    EvdevPtr pEvdev = pInfo->private;
+    struct emulateWheel *emulateWheel  = &pEvdev->emulateWheel;
+
+    TimerFree(emulateWheel->timer);
+    emulateWheel->timer = NULL;
+}
+
 
 /* Filter mouse button events */
 BOOL
@@ -64,7 +121,103 @@ EvdevWheelEmuFilterButton(InputInfoPtr pInfo, unsigned int button, int value)
     if (!pEvdev->emulateWheel.enabled)
 	return FALSE;
 
-    /* Check for EmulateWheelButton */
+    /* EmulateWheelButton - in 2 button mode. Process events from that buttons */
+
+    if (pEvdev->emulateWheel.button2 &&
+       (button == pEvdev->emulateWheel.button || button == pEvdev->emulateWheel.button2)) {
+        /* button press events */
+        if (value) {
+            /* State0 - EMWHEEL_OFF */
+            if (pEvdev->emulateWheel.state_2B == EMWHEEL_OFF) {
+                /* 1st button pressed */
+                pEvdev->emulateWheel.delayed_button = button;
+                pEvdev->emulateWheel.state_2B = EMWHEEL_TIMER;
+                /* Start the timer when the button is pressed */
+                pEvdev->emulateWheel.expires = pEvdev->emulateWheel.timeout + GetTimeInMillis();
+                pEvdev->emulateWheel.timer = TimerSet(pEvdev->emulateWheel.timer, 0,
+                                                      pEvdev->emulateWheel.timeout,
+                                                      EvdevWheelEmuTimer, pInfo);
+            }
+            /* State1 - EMWHEEL_TIMER */
+            else if (pEvdev->emulateWheel.state_2B == EMWHEEL_TIMER &&
+                     button != pEvdev->emulateWheel.delayed_button) {
+                /* If the other button was pressed within time limit */
+                ms = pEvdev->emulateWheel.expires - GetTimeInMillis();
+                if (ms < 0) {
+                    xf86IDrvMsg(pInfo, X_WARNING,
+                                "EmuWheel2B unexpected timeout, ms %d button %d delayed button %d\n",
+                                ms, button, pEvdev->emulateWheel.delayed_button);
+                    TimerCancel(pEvdev->emulateWheel.timer);
+                    pEvdev->emulateWheel.state_2B = EMWHEEL_OFF;
+                    EvdevQueueButtonEvent(pInfo, pEvdev->emulateWheel.delayed_button, 1);
+                    pEvdev->emulateWheel.delayed_button = 0;
+                    return FALSE; /* pass also 2nd button press event */
+                }
+                pEvdev->emulateWheel.state_2B = EMWHEEL_EMULATING;
+                pEvdev->emulateWheel.delayed_button = 0;
+                TimerCancel(pEvdev->emulateWheel.timer);
+                pEvdev->emulateWheel.button_state = 1; /* emulation active */
+            }
+            /* State2 - EMWHEEL_EMULATING - no state change. both buttons are held
+                                            no press event is expected
+               State3 - EMWHEEL_LEAVING - no state change.
+                                          button press events are not considered for simplicity */
+            else if (pEvdev->emulateWheel.state_2B == EMWHEEL_LEAVING
+                     && button != pEvdev->emulateWheel.filter_button) {
+                return TRUE;
+            }
+            else {
+                xf86IDrvMsg(pInfo, X_WARNING, "EmuWheel2B unexpected event\n");
+            }
+            return TRUE; /* Filter this button press event */
+        }
+        /* button release events */
+        else {
+            /* State2 - EMWHEEL_EMULATING */
+            if (pEvdev->emulateWheel.state_2B == EMWHEEL_EMULATING) {
+                /* stop emulation, then filter release event of other button */
+                pEvdev->emulateWheel.state_2B = EMWHEEL_LEAVING;
+                pEvdev->emulateWheel.button_state = 0; /* emulation inactive */
+                pEvdev->emulateWheel.filter_button = (button == pEvdev->emulateWheel.button) ?
+                        pEvdev->emulateWheel.button2 : pEvdev->emulateWheel.button;
+            }
+            /* State3 - EMWHEEL_LEAVING */
+            else if (pEvdev->emulateWheel.state_2B == EMWHEEL_LEAVING) {
+                if (button == pEvdev->emulateWheel.filter_button) {
+                    /* filter release event of other button, then return to default state */
+                    pEvdev->emulateWheel.state_2B = EMWHEEL_OFF;
+                    pEvdev->emulateWheel.filter_button = 0;
+                }
+            }
+            /* State1 - EMWHEEL_TIMER */
+            else if (pEvdev->emulateWheel.state_2B == EMWHEEL_TIMER) {
+                /* stop waiting for the other button and pass delayed press event */
+                TimerCancel(pEvdev->emulateWheel.timer);
+                pEvdev->emulateWheel.state_2B = EMWHEEL_OFF;
+                EvdevQueueButtonEvent(pInfo, pEvdev->emulateWheel.delayed_button, 1);
+                pEvdev->emulateWheel.delayed_button = 0;
+                return FALSE; /* pass this release event */
+            }
+            /* State0 - EMWHEEL_OFF - no state change */
+            else
+                return FALSE; /* pass this release event */
+            return TRUE; /* Filter this button release event */
+        }
+    }
+
+    /* EmulateWheelButton 2 button mode - events from other buttons */
+    if (pEvdev->emulateWheel.button2) {
+        /* when waiting for other button press, any other button event ends waiting */
+        if (pEvdev->emulateWheel.state_2B == EMWHEEL_TIMER) {
+            TimerCancel(pEvdev->emulateWheel.timer);
+            pEvdev->emulateWheel.state_2B = EMWHEEL_OFF;
+            EvdevQueueButtonEvent(pInfo, pEvdev->emulateWheel.delayed_button, 1);
+            pEvdev->emulateWheel.delayed_button = 0;
+        }
+        return FALSE;
+    }
+
+    /* Check for EmulateWheelButton - in one button mode */
     if (pEvdev->emulateWheel.button == button) {
 	pEvdev->emulateWheel.button_state = value;
 
@@ -244,26 +397,48 @@ void
 EvdevWheelEmuPreInit(InputInfoPtr pInfo)
 {
     EvdevPtr pEvdev = (EvdevPtr)pInfo->private;
-    int wheelButton;
+    int wheelButton, wheelButton2;
     int inertia;
     int timeout;
+    char *option_string = NULL;
 
     if (xf86SetBoolOption(pInfo->options, "EmulateWheel", FALSE)) {
 	pEvdev->emulateWheel.enabled = TRUE;
     } else
         pEvdev->emulateWheel.enabled = FALSE;
 
-    wheelButton = xf86SetIntOption(pInfo->options, "EmulateWheelButton", 4);
+    wheelButton = 4;
+    wheelButton2 = 0;
+    option_string = xf86SetStrOption(pInfo->options, "EmulateWheelButton", NULL);
 
-    if ((wheelButton < 0) || (wheelButton > EVDEV_MAXBUTTONS)) {
-        xf86IDrvMsg(pInfo, X_WARNING, "Invalid EmulateWheelButton value: %d\n",
-                    wheelButton);
-        xf86IDrvMsg(pInfo, X_WARNING, "Wheel emulation disabled.\n");
-
-        pEvdev->emulateWheel.enabled = FALSE;
+    if (option_string) {
+        int buttons = sscanf(option_string, "%d %d", &wheelButton, &wheelButton2);
+        if (buttons >= 1) {
+            int buttons_ok = TRUE;
+            if (wheelButton < 0 || wheelButton > EVDEV_MAXBUTTONS) {
+                xf86IDrvMsg(pInfo, X_WARNING, "Invalid EmulateWheelButton value: %d\n",
+                                               wheelButton);
+                buttons_ok = FALSE;
+            }
+            if ((buttons == 2) &&
+                (wheelButton2 <= 0 || wheelButton2 > EVDEV_MAXBUTTONS || wheelButton2 == wheelButton)) {
+                xf86IDrvMsg(pInfo, X_WARNING, "Invalid EmulateWheelButton 2nd value: %d\n",
+                                               wheelButton2);
+                buttons_ok = FALSE;
+            }
+            if (!buttons_ok) {
+                pEvdev->emulateWheel.enabled = FALSE;
+                xf86IDrvMsg(pInfo, X_WARNING, "Wheel emulation disabled.\n");
+            }
+        }
+        else {
+            xf86IDrvMsg(pInfo, X_WARNING, "Invalid EmulateWheelButton option\n");
+        }
+        free(option_string);
     }
 
     pEvdev->emulateWheel.button = wheelButton;
+    pEvdev->emulateWheel.button2 = wheelButton2;
 
     inertia = xf86SetIntOption(pInfo->options, "EmulateWheelInertia", 10);
 
@@ -318,10 +493,13 @@ EvdevWheelEmuPreInit(InputInfoPtr pInfo)
     pEvdev->emulateWheel.Y.traveled_distance = 0;
 
     xf86IDrvMsg(pInfo, X_CONFIG,
-                "EmulateWheelButton: %d, "
+                "EmulateWheelButton: %d,%d "
                 "EmulateWheelInertia: %d, "
                 "EmulateWheelTimeout: %d\n",
-                pEvdev->emulateWheel.button, inertia, timeout);
+                pEvdev->emulateWheel.button,
+                pEvdev->emulateWheel.button2, inertia, timeout);
+
+    pEvdev->emulateWheel.timer = TimerSet(NULL, 0, 0, NULL, NULL);
 }
 
 static int
@@ -339,6 +517,8 @@ EvdevWheelEmuSetProperty(DeviceIntPtr dev, Atom atom, XIPropertyValuePtr val,
         if (!checkonly)
         {
             pEvdev->emulateWheel.enabled = *((BOOL*)val->data);
+            xf86IDrvMsg(pInfo, X_INFO, "Mouse wheel emulation %s.\n",
+                        (pEvdev->emulateWheel.enabled) ? "enabled" : "disabled");
             /* Don't enable with zero inertia, otherwise we may get stuck in an
              * infinite loop */
             if (pEvdev->emulateWheel.inertia <= 0)
@@ -350,22 +530,36 @@ EvdevWheelEmuSetProperty(DeviceIntPtr dev, Atom atom, XIPropertyValuePtr val,
                             16, PropModeReplace, 1,
                             &pEvdev->emulateWheel.inertia, TRUE);
             }
+            pEvdev->emulateWheel.state_2B = EMWHEEL_OFF;  /* reset 2B state */
         }
     }
     else if (atom == prop_wheel_button)
     {
-        int bt;
+        int bt, bt2 = 0;
 
-        if (val->format != 8 || val->size != 1 || val->type != XA_INTEGER)
+        if (val->format != 8 || val->size < 1 || val->size > 2 || val->type != XA_INTEGER)
             return BadMatch;
 
         bt = *((CARD8*)val->data);
 
-        if (bt < 0 || bt >= EVDEV_MAXBUTTONS)
+        if (val->size == 2) {
+            bt2 = ((CARD8*)val->data)[1];
+            if (bt2 <= 0 || bt2 >= EVDEV_MAXBUTTONS || bt2 == bt) {
+                xf86IDrvMsg(pInfo, X_WARNING, "Invalid EmulateWheelButton 2nd value: %d\n",
+                                               bt2);
+                return BadValue;
+            }
+        }
+        if (bt < 0 || bt >= EVDEV_MAXBUTTONS) {
+            xf86IDrvMsg(pInfo, X_WARNING, "Invalid EmulateWheelButton value: %d\n",
+                                           bt);
             return BadValue;
-
-        if (!checkonly)
+        }
+        if (!checkonly) {
             pEvdev->emulateWheel.button = bt;
+            pEvdev->emulateWheel.button2 = bt2;
+            pEvdev->emulateWheel.state_2B = EMWHEEL_OFF; /* reset state to default */
+        }
     } else if (atom == prop_wheel_axismap)
     {
         if (val->format != 8 || val->size != 4 || val->type != XA_INTEGER)
@@ -463,9 +657,11 @@ EvdevWheelEmuInitProperty(DeviceIntPtr dev)
     XISetDevicePropertyDeletable(dev, prop_wheel_timeout, FALSE);
 
     prop_wheel_button = MakeAtom(EVDEV_PROP_WHEEL_BUTTON, strlen(EVDEV_PROP_WHEEL_BUTTON), TRUE);
+    vals[0] = pEvdev->emulateWheel.button;
+    vals[1] = pEvdev->emulateWheel.button2;
     rc = XIChangeDeviceProperty(dev, prop_wheel_button, XA_INTEGER, 8,
-                                PropModeReplace, 1,
-                                &pEvdev->emulateWheel.button, FALSE);
+                                PropModeReplace, 2,
+                                vals, FALSE);
     if (rc != Success)
         return;
 

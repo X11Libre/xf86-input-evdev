@@ -224,7 +224,7 @@ typedef struct {
 	unsigned int        lock_pair[EVDEV_MAXBUTTONS];  /* specify a meta/lock pair */
 	BOOL                lock_state[EVDEV_MAXBUTTONS]; /* state of any locked buttons */
     } dragLock;
-    struct {
+    struct emulateWheel {
         BOOL                enabled;
         int                 button;
         int                 button_state;
@@ -233,6 +233,12 @@ typedef struct {
         WheelAxis           Y;
         Time                expires;     /* time of expiry */
         Time                timeout;
+        /* following members are for 2 button mode */
+        int                 button2;        /* if non zero, 2nd button number */
+        OsTimerPtr          timer;          /* OS timer */
+        int                 state_2B;       /* state for 2 button mode */
+        int                 delayed_button; /* delayed button number */
+        int                 filter_button;  /* button to filter */
     } emulateWheel;
     struct {
         int                 vert_delta;
@@ -299,6 +305,8 @@ void Evdev3BEmuProcessAbsMotion(InputInfoPtr pInfo, ValuatorMask *vals);
 void EvdevWheelEmuPreInit(InputInfoPtr pInfo);
 BOOL EvdevWheelEmuFilterButton(InputInfoPtr pInfo, unsigned int button, int value);
 BOOL EvdevWheelEmuFilterMotion(InputInfoPtr pInfo, struct input_event *pEv);
+CARD32 EvdevWheelEmuTimer(OsTimerPtr timer, CARD32 time, pointer arg);
+void EvdevWheelEmuFinalize(InputInfoPtr);
 
 /* Draglock code */
 void EvdevDragLockPreInit(InputInfoPtr pInfo);

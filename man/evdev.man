@@ -114,7 +114,7 @@ and
 .B YAxisMapping
 options.  Default: off. Property "Evdev Wheel Emulation".
 .TP 7
-.BI "Option \*qEmulateWheelButton\*q \*q" integer \*q
+.BI "Option \*qEmulateWheelButton\*q \*q" "integer [integer]"\*q
 Specifies which button must be held down to enable wheel emulation mode.
 While this button is down, X and/or Y pointer movement will generate button
 press/release events as specified for the
@@ -125,6 +125,10 @@ settings. If the button is 0 and
 .BR EmulateWheel
 is on, any motion of the device is converted into wheel events. Default: 4.
 Property: "Evdev Wheel Emulation Button".
+.IP
+If two button numbers are given, both buttons have to be pressed simultaneously - within time interval
+.B EmulateWheelTimeout
+with no other button events in between.
 .TP 7
 .BI "Option \*qEmulateWheelInertia\*q \*q" integer \*q
 Specifies how far (in pixels) the pointer must move to generate button
