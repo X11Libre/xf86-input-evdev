@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+  <id>org.x.driver.input.evdev</id>
+  <metadata_license>MIT</metadata_license>
+  <name>xserver-xorg-input-evdev</name>
+  <summary>X.Org X server -- evdev input driver</summary>
+  <description>
+    <p>This package provides the driver for input devices using evdev,
+    the Linux kernel's event delivery mechanism.  This driver allows
+    for multiple keyboards and mice to be treated as separate input
+    devices.</p>
+    <p>This package is built from the X.org xf86-input-evdev driver module.</p>
+  </description>
+  <url type="homepage">https://www.x.org</url>
+  <provides>
+    <modalias>lkmodule:usbtouchscreen</modalias>
+    <modalias>usb:v05A4p9999d*</modalias>
+    <modalias>usb:v0EEFp0001d*</modalias>
+  </provides>
+</component>
