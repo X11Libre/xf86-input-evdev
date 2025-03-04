@@ -210,9 +210,7 @@ EvdevWheelEmuHandleButtonMap(InputInfoPtr pInfo, WheelAxisPtr pAxis,
 	    ((up_button > 0) && (up_button <= EVDEV_MAXBUTTONS)) &&
 	    ((down_button > 0) && (down_button <= EVDEV_MAXBUTTONS))) {
 
-	    /* Use xstrdup to allocate a string for us */
-	    msg = xstrdup("buttons XX and YY");
-
+	    msg = strdup("buttons XX and YY");
 	    if (msg)
 		sprintf(msg, "buttons %d and %d", up_button, down_button);
 
