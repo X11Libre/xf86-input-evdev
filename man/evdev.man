@@ -2,7 +2,7 @@
 .ds q \N'34'
 .TH EVDEV __drivermansuffix__ 2016-11-17 __vendorversion__
 .SH NAME
-evdev \- Generic Linux input driver
+evdev \- Generic Linux input driver for Xorg
 .SH SYNOPSIS
 .nf
 .B "Section \*qInputDevice\*q"
@@ -17,7 +17,7 @@ evdev \- Generic Linux input driver
 .fi
 .SH DESCRIPTION
 .B evdev
-is an __xservername__ input driver for Linux\'s generic event devices.
+is an Xorg input driver for Linux\'s generic event devices.
 It therefore supports all input devices that the kernel knows about,
 including most mice, keyboards, tablets, and touchscreens.
 .B evdev
@@ -27,7 +27,7 @@ The
 .B evdev
 driver can serve as both a pointer and a keyboard input device.
 Multiple input devices are supported by multiple instances of this driver,
-with one InputDevice section of your __xconfigfile__ for each input device
+with one InputDevice section of your xorg.conf for each input device
 that will use this driver.
 .PP
 It is recommended that
@@ -35,10 +35,10 @@ It is recommended that
 devices are configured through the
 .B InputClass
 directive (refer to
-.BR __xconfigfile__ (__filemansuffix__))
+.BR xorg.conf (__filemansuffix__))
 instead of manual per-device configuration.
 Devices configured in the
-.BR __xconfigfile__ (__filemansuffix__)
+.BR xorg.conf (__filemansuffix__)
 are not hot-plug capable.
 .SH SUPPORTED HARDWARE
 In general, any input device that the kernel has a driver for can be accessed
@@ -48,7 +48,7 @@ driver.
 See the Linux kernel documentation for a complete list.
 .SH CONFIGURATION DETAILS
 Please refer to
-.BR __xconfigfile__ (__filemansuffix__)
+.BR xorg.conf (__filemansuffix__)
 for general configuration details and
 for options that can be used with all input drivers.
 This section only covers configuration details specific to this driver.
@@ -363,7 +363,7 @@ Value range 0-32, 0 disables a value.
 .SH AUTHORS
 Kristian Høgsberg, Peter Hutterer
 .SH "SEE ALSO"
-.BR __xservername__ (__appmansuffix__),
-.BR __xconfigfile__ (__filemansuffix__),
+.BR Xorg (__appmansuffix__),
+.BR xorg.conf (__filemansuffix__),
 .BR Xserver (__appmansuffix__),
 .BR X (__miscmansuffix__)
