@@ -25,6 +25,11 @@ DISTCHECK_CONFIGURE_FLAGS = --with-sdkdir='$${includedir}/xorg'
 SUBDIRS = src man include
 MAINTAINERCLEANFILES = ChangeLog INSTALL
 
+EXTRA_DIST = org.x.driver.input.evdev.metainfo.xml
+
+metainfodir = $(datarootdir)/metainfo
+dist_metainfo_DATA = org.x.driver.input.evdev.metainfo.xml
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = xorg-evdev.pc
 
