@@ -704,12 +704,7 @@ EvdevProcessTouch(InputInfoPtr pInfo)
 static int
 num_slots(EvdevPtr pEvdev)
 {
-    int value;
-
-    if (pEvdev->mtdev)
-        value = pEvdev->mtdev->caps.slot.maximum + 1;
-    else
-        value = libevdev_get_num_slots(pEvdev->dev);
+    int value = pEvdev->mtdev ? pEvdev->mtdev->caps.slot.maximum + 1 : libevdev_get_num_slots(pEvdev->dev);
 
     /* If we don't know how many slots there are, assume at least 10 */
     return value > 1 ? value : 10;
