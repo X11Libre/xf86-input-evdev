@@ -51,11 +51,12 @@ PKG_CHECK_MODULES(LIBEVDEV, [libevdev >= 0.4])
 PKG_CHECK_MODULES(MTDEV, mtdev)
 
 # Define a configure option for an alternate input module directory
+PKG_PROG_PKG_CONFIG([0.25])
 AC_ARG_WITH(xorg-module-dir,
-            AC_HELP_STRING([--with-xorg-module-dir=DIR],
-                           [Default xorg module directory [[default=$libdir/xorg/modules]]]),
+            AS_HELP_STRING([--with-xorg-module-dir=DIR],
+                           [Default xorg module directory]),
             [moduledir="$withval"],
-            [moduledir="$libdir/xorg/modules"])
+            [moduledir=`$PKG_CONFIG --variable=moduledir xorg-server`])
 inputdir=${moduledir}/input
 AC_SUBST(inputdir)
 
