@@ -22,10 +22,10 @@
 
 # Initialize Autoconf
 AC_PREREQ([2.60])
-AC_INIT([xf86-input-evdev],
+AC_INIT([xlibre-xf86-input-evdev],
         [2.11.0],
-        [https://gitlab.freedesktop.org/xorg/driver/xf86-input-evdev/issues],
-        [xf86-input-evdev])
+        [https://github.com/X11Libre/xf86-input-evdev/issues],
+        [xlibre-xf86-input-evdev])
 AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR(.)
