@@ -23,7 +23,7 @@
 # Initialize Autoconf
 AC_PREREQ([2.60])
 AC_INIT([xlibre-xf86-input-evdev],
-        [2.11.0],
+        [2.11.1],
         [https://github.com/X11Libre/xf86-input-evdev/issues],
         [xlibre-xf86-input-evdev])
 AC_CONFIG_SRCDIR([Makefile.am])
