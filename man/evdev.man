@@ -2,7 +2,7 @@
 .ds q \N'34'
 .TH EVDEV __drivermansuffix__ 2016-11-17 __vendorversion__
 .SH NAME
-evdev \- Generic Linux input driver for Xorg
+evdev \- Generic Linux input driver for XLibre
 .SH SYNOPSIS
 .nf
 .B "Section \*qInputDevice\*q"
@@ -17,7 +17,7 @@ evdev \- Generic Linux input driver for Xorg
 .fi
 .SH DESCRIPTION
 .B evdev
-is an Xorg input driver for Linux\'s generic event devices.
+is an XLibre input driver for Linux\'s generic event devices.
 It therefore supports all input devices that the kernel knows about,
 including most mice, keyboards, tablets, and touchscreens.
 .B evdev
@@ -363,7 +363,7 @@ Value range 0-32, 0 disables a value.
 .SH AUTHORS
 Kristian Høgsberg, Peter Hutterer
 .SH "SEE ALSO"
-.BR Xorg (__appmansuffix__),
+.BR XLibre (__appmansuffix__),
 .BR xorg.conf (__filemansuffix__),
 .BR Xserver (__appmansuffix__),
 .BR X (__miscmansuffix__)
