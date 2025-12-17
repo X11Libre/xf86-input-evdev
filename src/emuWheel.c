@@ -30,9 +30,7 @@
 */
 
 /* Mouse wheel emulation code. */
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 #include "evdev.h"
 
 #include <X11/Xatom.h>

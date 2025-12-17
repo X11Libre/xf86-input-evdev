@@ -32,9 +32,7 @@
 
 /* Draglock code */
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 #include "evdev.h"
 
 #include <xf86.h>

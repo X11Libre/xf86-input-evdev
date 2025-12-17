@@ -28,10 +28,7 @@
  *	Thomas H.P. Andersen (phomes@gmail.com)
  */
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
-
 #include "evdev.h"
 #include "axis_labels.h"
 
