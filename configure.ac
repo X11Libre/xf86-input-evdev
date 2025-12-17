@@ -83,5 +83,5 @@ AC_CONFIG_FILES([Makefile
                  src/Makefile
                  man/Makefile
                  include/Makefile
-                 xorg-evdev.pc])
+                ])
 AC_OUTPUT

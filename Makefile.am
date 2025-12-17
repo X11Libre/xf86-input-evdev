@@ -27,9 +27,6 @@ DISTCHECK_CONFIGURE_FLAGS = --with-xorg-module-dir='$${libdir}/xorg/modules' \
 SUBDIRS = src man include
 MAINTAINERCLEANFILES = ChangeLog INSTALL
 
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = xorg-evdev.pc
-
 dist_xorgconf_DATA = 10-evdev.conf
 
 .PHONY: ChangeLog INSTALL
