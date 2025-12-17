@@ -76,9 +76,6 @@ sdkdir=`$PKG_CONFIG --variable=sdkdir xorg-server`
 AC_ARG_WITH([sdkdir], [], [sdkdir="$withval"])
 AC_SUBST([sdkdir])
 
-DRIVER_NAME=evdev
-AC_SUBST([DRIVER_NAME])
-
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  man/Makefile
