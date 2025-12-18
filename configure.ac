@@ -76,9 +76,5 @@ sdkdir=`$PKG_CONFIG --variable=sdkdir xorg-server`
 AC_ARG_WITH([sdkdir], [], [sdkdir="$withval"])
 AC_SUBST([sdkdir])
 
-AC_CONFIG_FILES([Makefile
-                 src/Makefile
-                 man/Makefile
-                 include/Makefile
-                ])
+AC_CONFIG_FILES([Makefile src/Makefile man/Makefile include/Makefile])
 AC_OUTPUT
