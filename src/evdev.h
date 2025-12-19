@@ -68,14 +68,6 @@
 #define LED_CNT (LED_MAX+1)
 #endif
 
-#if GET_ABI_MAJOR(ABI_XINPUT_VERSION) >= 24
-#define BLOCK_HANDLER_ARGS     	void *data, void *waitTime
-#define WAKEUP_HANDLER_ARGS	void *data, int i
-#else
-#define BLOCK_HANDLER_ARGS	pointer data, struct timeval **waitTime, pointer LastSelectMask
-#define WAKEUP_HANDLER_ARGS	void *data, int i, pointer LastSelectMask
-#endif
-
 #define EVDEV_MAXBUTTONS 32
 #define EVDEV_MAXQUEUE 32
 
@@ -270,8 +262,8 @@ unsigned int EvdevUtilButtonEventToButtonNumber(EvdevPtr pEvdev, int code);
 /* Middle Button emulation */
 int  EvdevMBEmuTimer(InputInfoPtr);
 BOOL EvdevMBEmuFilterEvent(InputInfoPtr, int, BOOL);
-void EvdevMBEmuWakeupHandler(WAKEUP_HANDLER_ARGS);
-void EvdevMBEmuBlockHandler(BLOCK_HANDLER_ARGS);
+void EvdevMBEmuWakeupHandler(void *data, int i);
+void EvdevMBEmuBlockHandler(void *data, void *waitTime);
 void EvdevMBEmuPreInit(InputInfoPtr);
 void EvdevMBEmuOn(InputInfoPtr);
 void EvdevMBEmuFinalize(InputInfoPtr);

@@ -266,7 +266,7 @@ EvdevMBEmuFilterEvent(InputInfoPtr pInfo, int button, BOOL press)
 }
 
 
-void EvdevMBEmuWakeupHandler(WAKEUP_HANDLER_ARGS)
+void EvdevMBEmuWakeupHandler(void *data, int i)
 {
     InputInfoPtr pInfo = (InputInfoPtr)data;
     EvdevPtr     pEvdev = (EvdevPtr)pInfo->private;
@@ -280,7 +280,7 @@ void EvdevMBEmuWakeupHandler(WAKEUP_HANDLER_ARGS)
     }
 }
 
-void EvdevMBEmuBlockHandler(BLOCK_HANDLER_ARGS)
+void EvdevMBEmuBlockHandler(void *data, void *waitTime)
 {
     InputInfoPtr    pInfo = (InputInfoPtr) data;
     EvdevPtr        pEvdev= (EvdevPtr) pInfo->private;
