@@ -56,10 +56,6 @@
 /* BOOL, 2 values [x, y], 1 inverts axis */
 #define EVDEV_PROP_INVERT_AXES "Evdev Axis Inversion"
 
-/* Reopen attempts. */
-/* CARD8 */
-#define EVDEV_PROP_REOPEN "Evdev Reopen Attempts" /* OBSOLETE */
-
 /* Run-time calibration */
 /* CARD32, 4 values [minx, maxx, miny, maxy], or no values for unset */
 #define EVDEV_PROP_CALIBRATION "Evdev Axis Calibration"
