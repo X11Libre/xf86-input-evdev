@@ -52,19 +52,11 @@ PKG_CHECK_MODULES(MTDEV, mtdev)
 
 # Define a configure option for an alternate input module directory
 PKG_PROG_PKG_CONFIG([0.25])
-AC_ARG_WITH(xorg-module-dir,
-            AS_HELP_STRING([--with-xorg-module-dir=DIR],
-                           [Default xorg module directory]),
-            [moduledir="$withval"],
-            [moduledir=`$PKG_CONFIG --variable=moduledir xorg-server`])
+moduledir=`$PKG_CONFIG --variable=moduledir xorg-server`
 inputdir=${moduledir}/input
 AC_SUBST(inputdir)
 
-AC_ARG_WITH(xorg-conf-dir,
-            AC_HELP_STRING([--with-xorg-conf-dir=DIR],
-                           [Default xorg.conf.d directory [[default=$prefix/share/X11/xorg.conf.d/]]]),
-            [xorgconfdir="$withval"],
-            [xorgconfdir="$prefix/share/X11/xorg.conf.d"])
+xorgconfdir=`$PKG_CONFIG --variable=sysconfigdir xorg-server`
 AC_SUBST(xorgconfdir)
 
 AC_CONFIG_FILES([Makefile src/Makefile man/Makefile])
