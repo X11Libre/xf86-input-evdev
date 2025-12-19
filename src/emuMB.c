@@ -185,11 +185,7 @@ EvdevMBEmuTimer(InputInfoPtr pInfo)
     int id;
     int mapped_id;
 
-#if HAVE_THREADED_INPUT
     input_lock();
-#else
-    int sigstate = xf86BlockSIGIO();
-#endif
 
     pEvdev->emulateMB.pending = FALSE;
     if ((id = stateTab[pEvdev->emulateMB.state][4][0]) != 0) {
@@ -205,11 +201,7 @@ EvdevMBEmuTimer(InputInfoPtr pInfo)
                     pEvdev->emulateMB.state);
     }
 
-#if HAVE_THREADED_INPUT
     input_unlock();
-#else
-    xf86UnblockSIGIO(sigstate);
-#endif
     return 0;
 }
 

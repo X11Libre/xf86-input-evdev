@@ -68,10 +68,6 @@
 #define LED_CNT (LED_MAX+1)
 #endif
 
-#if GET_ABI_MAJOR(ABI_XINPUT_VERSION) >= 23
-#define HAVE_THREADED_INPUT	1
-#endif
-
 #if GET_ABI_MAJOR(ABI_XINPUT_VERSION) >= 24
 #define BLOCK_HANDLER_ARGS     	void *data, void *waitTime
 #define WAKEUP_HANDLER_ARGS	void *data, int i
