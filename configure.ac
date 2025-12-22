@@ -45,7 +45,10 @@ XORG_DEFAULT_OPTIONS
 
 # Obtain compiler/linker options from server and required extensions
 PKG_CHECK_MODULES(XORG, [xorg-server >= 25.0.0] xproto [inputproto >= 2.1.99.3])
-PKG_CHECK_MODULES(UDEV, libudev, [AC_DEFINE(HAVE_LIBUDEV, 1,[libudev support])])
+PKG_CHECK_MODULES(UDEV, libudev,
+    [HAVE_UDEV=yes], [HAVE_UDEV=no])
+AS_IF([test "$HAVE_UDEV" = "yes"],
+    [AC_DEFINE([HAVE_LIBUDEV], [1], [Define if libudev is available])])
 
 PKG_CHECK_MODULES(LIBEVDEV, [libevdev >= 0.4])
 PKG_CHECK_MODULES(MTDEV, mtdev)
