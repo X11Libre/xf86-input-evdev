@@ -2693,16 +2693,9 @@ _X_EXPORT InputDriverRec EVDEV = {
 #endif
 };
 
-static void
-EvdevUnplug(pointer	p)
-{
-}
+static void EvdevUnplug(void *p) { }
 
-static pointer
-EvdevPlug(pointer	module,
-          pointer	options,
-          int		*errmaj,
-          int		*errmin)
+static void *EvdevPlug(void *module, void *options, int *errmaj, int *errmin)
 {
     xf86AddInputDriver(&EVDEV, module, 0);
     return module;

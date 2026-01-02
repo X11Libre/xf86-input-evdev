@@ -81,7 +81,7 @@ Evdev3BEmuPostButtonEvent(InputInfoPtr pInfo, int button, enum ButtonAction act)
  * @param arg The InputInfoPtr for this device.
  */
 CARD32
-Evdev3BEmuTimer(OsTimerPtr timer, CARD32 time, pointer arg)
+Evdev3BEmuTimer(OsTimerPtr timer, CARD32 time, void *arg)
 {
     InputInfoPtr      pInfo    = (InputInfoPtr)arg;
     EvdevPtr          pEvdev   = pInfo->private;

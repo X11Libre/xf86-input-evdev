@@ -326,7 +326,7 @@ EvdevMBEmuOn(InputInfoPtr pInfo)
 
     RegisterBlockAndWakeupHandlers (EvdevMBEmuBlockHandler,
                                     EvdevMBEmuWakeupHandler,
-                                    (pointer)pInfo);
+                                    (void*)pInfo);
 }
 
 void
@@ -337,7 +337,7 @@ EvdevMBEmuFinalize(InputInfoPtr pInfo)
 
     RemoveBlockAndWakeupHandlers (EvdevMBEmuBlockHandler,
                                   EvdevMBEmuWakeupHandler,
-                                  (pointer)pInfo);
+                                  (void*)pInfo);
 
 }
 
