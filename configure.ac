@@ -62,5 +62,4 @@ AC_SUBST(inputdir)
 xorgconfdir=`$PKG_CONFIG --variable=sysconfigdir xorg-server`
 AC_SUBST(xorgconfdir)
 
-AC_CONFIG_FILES([Makefile src/Makefile man/Makefile])
-AC_OUTPUT
+AC_OUTPUT([Makefile src/Makefile man/Makefile man/evdev.man])
