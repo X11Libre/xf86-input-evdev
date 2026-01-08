@@ -76,3 +76,5 @@ core
 #		Edit the following section as needed
 # For example, !report.pc overrides *.pc. See 'man gitignore'
 # 
+man/evdev.4
+man/evdev.man

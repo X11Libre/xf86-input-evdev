@@ -1,6 +1,6 @@
 .\" shorthand for double quote that works everywhere.
 .ds q \N'34'
-.TH EVDEV __drivermansuffix__ 2016-11-17 __vendorversion__
+.TH EVDEV @DRIVER_MAN_SUFFIX@ 2016-11-17 "@PACKAGE_STRING@" "X Version 11"
 .SH NAME
 evdev \- Generic Linux input driver for XLibre
 .SH SYNOPSIS
@@ -363,7 +363,7 @@ Value range 0-32, 0 disables a value.
 .SH AUTHORS
 Kristian Høgsberg, Peter Hutterer
 .SH "SEE ALSO"
-.BR XLibre (__appmansuffix__),
-.BR xorg.conf (__filemansuffix__),
-.BR Xserver (__appmansuffix__),
-.BR X (__miscmansuffix__)
+.BR XLibre (@APP_MAN_SUFFIX@),
+.BR xorg.conf (@FILE_MAN_SUFFIX@),
+.BR Xserver (@APP_MAN_SUFFIX@),
+.BR X (@MISC_MAN_SUFFIX@)
