@@ -55,9 +55,8 @@ PKG_CHECK_MODULES(MTDEV, mtdev)
 
 # Define a configure option for an alternate input module directory
 PKG_PROG_PKG_CONFIG([0.25])
-moduledir=`$PKG_CONFIG --variable=moduledir xorg-server`
-inputdir=${moduledir}/input
-AC_SUBST(inputdir)
+xlibre_input_drivers_dir=`$PKG_CONFIG --variable=input_drivers_dir xlibre-server`
+AC_SUBST(xlibre_input_drivers_dir)
 
 xorgconfdir=`$PKG_CONFIG --variable=sysconfigdir xorg-server`
 AC_SUBST(xorgconfdir)
