@@ -31,7 +31,7 @@ AM_CPPFLAGS =-I$(top_srcdir)/include $(LIBEVDEV_CFLAGS)
 evdev_drv_la_LTLIBRARIES = evdev_drv.la
 evdev_drv_la_LDFLAGS = -module -avoid-version
 evdev_drv_la_LIBADD = $(MTDEV_LIBS) $(UDEV_LIBS) $(LIBEVDEV_LIBS)
-evdev_drv_ladir = @inputdir@
+evdev_drv_ladir = @xlibre_input_drivers_dir@
 
 evdev_drv_la_SOURCES = evdev.c \
                                evdev.h \
