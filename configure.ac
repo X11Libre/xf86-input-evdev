@@ -61,4 +61,5 @@ AC_SUBST(xlibre_input_drivers_dir)
 xorgconfdir=`$PKG_CONFIG --variable=sysconfigdir xorg-server`
 AC_SUBST(xorgconfdir)
 
-AC_OUTPUT([Makefile src/Makefile man/Makefile man/evdev.man])
+AC_CONFIG_FILES([Makefile src/Makefile man/Makefile man/evdev.man])
+AC_OUTPUT
