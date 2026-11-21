@@ -2701,6 +2701,11 @@ static void *EvdevPlug(void *module, void *options, int *errmaj, int *errmin)
     return module;
 }
 
+#define EVDEV_VERSION_MAJOR	PACKAGE_VERSION_MAJOR
+#define EVDEV_VERSION_MINOR	PACKAGE_VERSION_MINOR
+#define EVDEV_VERSION_PATCH	PACKAGE_VERSION_PATCHLEVEL
+#define EVDEV_VERSION_SUFFIX	PACKAGE_VERSION_SUFFIX
+
 static XF86ModuleVersionInfo EvdevVersionRec =
 {
     "evdev",
@@ -2708,7 +2713,7 @@ static XF86ModuleVersionInfo EvdevVersionRec =
     MODINFOSTRING1,
     MODINFOSTRING2,
     XORG_VERSION_CURRENT,
-    PACKAGE_VERSION_MAJOR, PACKAGE_VERSION_MINOR, PACKAGE_VERSION_PATCHLEVEL,
+    EVDEV_VERSION_MAJOR, EVDEV_VERSION_MINOR, EVDEV_VERSION_PATCH,
     ABI_CLASS_XINPUT,
     ABI_XINPUT_VERSION,
     MOD_CLASS_XINPUT,
@@ -2721,6 +2726,10 @@ _X_EXPORT XF86ModuleData evdevModuleData =
     EvdevPlug,
     EvdevUnplug
 };
+
+#ifdef XF86_MODULE_VERSION_SUFFIX
+XF86_MODULE_VERSION_SUFFIX(evdev, EVDEV_VERSION_SUFFIX);
+#endif
 
 
 /* Return an index value for a given button event code

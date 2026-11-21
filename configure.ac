@@ -43,6 +43,11 @@ m4_ifndef([XORG_MACROS_VERSION],
 XORG_MACROS_VERSION(1.8)
 XORG_DEFAULT_OPTIONS
 
+# XORG_RELEASE_VERSION drops a pre-release suffix such as "-rc1"; keep it.
+version_suffix=`echo "$PACKAGE_VERSION" | sed 's/^[[^-]]*//'`
+AC_DEFINE_UNQUOTED([PACKAGE_VERSION_SUFFIX], ["$version_suffix"],
+                   [Pre-release suffix of the version])
+
 # Obtain compiler/linker options from server and required extensions
 PKG_CHECK_MODULES(XORG, [xorg-server >= 25.0.0] xproto [inputproto >= 2.1.99.3])
 PKG_CHECK_MODULES(UDEV, libudev,
